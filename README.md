@@ -2,7 +2,19 @@
 
 > **“One Campus. Every Event. Smarter with AI.”**
 
+🌐 **Live Hosted Website:** [https://srivarshanbala887-hash.github.io/Srivarshan/](https://srivarshanbala887-hash.github.io/Srivarshan/)  
+📄 **30% Milestone Project Report:** [PROJECT_COMPLETION_REPORT_30_PERCENT.md](./PROJECT_COMPLETION_REPORT_30_PERCENT.md)
+
+---
+
 CampusAI is a modern, responsive college event management web application built with **React**, **Vite**, and **Tailwind CSS**. It provides a centralized hub for students and university administrators to discover, register, create, track, and manage collegiate events with simulated AI recommendation, popularity prediction, and digital QR ticketing.
+
+---
+
+## 🌐 Live Demo & Access
+
+Click the live link below to test the fully functional deployed application in your browser:
+👉 **[https://srivarshanbala887-hash.github.io/Srivarshan/](https://srivarshanbala887-hash.github.io/Srivarshan/)**
 
 ---
 
@@ -31,10 +43,11 @@ CampusAI is a modern, responsive college event management web application built 
 - **Icons**: Lucide React
 - **Animations & Effects**: Canvas Confetti, Tailwind CSS keyframes
 - **State & Storage**: React Context + Browser LocalStorage persistence
+- **Hosting**: GitHub Pages (HTTPS)
 
 ---
 
-## 🛠️ Quick Start
+## 🛠️ Quick Local Setup
 
 ### 1. Install Dependencies
 ```bash
@@ -59,4 +72,4 @@ npm run build
 - **Student Persona**: Alex Johnson (Computer Science & Engineering, 3rd Year)
 - **Admin Persona**: Prof. Sarah Miller (Dean of Events & Academic Affairs)
 
-Toggle between roles anytime using the header quick-switch pill.
+Toggle between roles anytime using the header quick-switch pill in the navigation bar.
