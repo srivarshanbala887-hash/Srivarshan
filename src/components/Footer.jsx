@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sparkles, Heart, Shield, Mail, Phone, MapPin, Globe, Award } from 'lucide-react';
 
-export default function Footer({ onNavigate }) {
+export default function Footer({ onNavigate, onOpenTestHarness }) {
   return (
     <footer className="bg-slate-900 text-slate-300 border-t border-slate-800 pt-16 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -100,6 +100,12 @@ export default function Footer({ onNavigate }) {
               <li>
                 <button onClick={() => onNavigate('my-events')} className="hover:text-white transition-colors">
                   Verified Participation Certificates
+                </button>
+              </li>
+              <li>
+                <button onClick={onOpenTestHarness} className="text-ai-400 hover:text-ai-300 font-semibold transition-colors flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-ai-400 animate-pulse"></span>
+                  Unit Test Harness & Error Checks
                 </button>
               </li>
             </ul>

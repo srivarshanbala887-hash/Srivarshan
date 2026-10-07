@@ -76,7 +76,11 @@ export function EventProvider({ children }) {
     localStorage.setItem('campusai_recently_viewed', JSON.stringify(recentlyViewedIds));
   }, [recentlyViewedIds]);
 
-  // Track event view
+  /**
+   * Records a user view interaction to maintain recently viewed event history.
+   * Capped at the 6 most recent unique interactions.
+   * @param {string} eventId - Unique event identifier
+   */
   const trackEventView = (eventId) => {
     setRecentlyViewedIds(prev => {
       const filtered = prev.filter(id => id !== eventId);
@@ -84,7 +88,15 @@ export function EventProvider({ children }) {
     });
   };
 
-  // AI Matching Score Calculation
+  /**
+   * Computes a multi-attribute affinity match score between an event and student profile.
+   * Mathematical Model: S(U_i, E_j) = Base(50) + SkillBonus(0-35) + DeptBonus(10) + HistBonus(8) + PopBonus(5)
+   * Score is bounded between 62% and 99% to prevent trivial bounds and overconfidence.
+   *
+   * @param {Object} event - Event entity with skills, department, category, and popularityScore
+   * @param {Object} [customUser=null] - Optional user override (used during real-time preference tuning)
+   * @returns {{ score: number, reasons: string[], primaryReason: string }} Computed match metric and explainable AI tags
+   */
   const calculateAIMatch = (event, customUser = null) => {
     const activeUser = customUser || user;
     if (!activeUser) return { score: 75, reasons: ['Popular on campus'] };
@@ -139,7 +151,11 @@ export function EventProvider({ children }) {
     };
   };
 
-  // Get AI Recommended Events
+  /**
+   * Retrieves top-N non-registered upcoming events sorted descending by AI similarity.
+   * @param {number} [limit=4] - Maximum number of recommendations to return
+   * @returns {Array<Object>} Sorted list of recommended event objects with aiMatch payload
+   */
   const getAIRecommendations = (limit = 4) => {
     const registeredIds = registrations.map(r => r.eventId);
     return events
@@ -152,7 +168,17 @@ export function EventProvider({ children }) {
       .slice(0, limit);
   };
 
-  // Register for Event
+  /**
+   * Executes an atomic event registration transaction:
+   * 1. Validates existence and non-exhaustion of seat quota.
+   * 2. Guards against duplicate registrations (by email or student ID).
+   * 3. Increments event registeredCount and issues a deterministic QR ticket code.
+   * 4. Enqueues a high-priority confirmed notification alert.
+   *
+   * @param {string} eventId - Unique target event identifier
+   * @param {Object} [studentDetails={}] - Attendee metadata overrides (name, email, studentId, dept, year)
+   * @returns {{ success: boolean, ticket?: Object, message: string }} Transaction status payload
+   */
   const registerForEvent = (eventId, studentDetails = {}) => {
     const event = events.find(e => e.id === eventId);
     if (!event) return { success: false, message: 'Event not found' };
@@ -218,7 +244,14 @@ export function EventProvider({ children }) {
     };
   };
 
-  // Cancel Registration
+  /**
+   * Reverses a confirmed registration transaction:
+   * 1. Removes the registration object from user pass wallet.
+   * 2. Restores the released seat back to the event capacity pool (max(0, count - 1)).
+   * 3. Dispatches a cancellation audit notification.
+   *
+   * @param {string} ticketId - Unique ticket identifier (e.g., PASS-HAC-8492)
+   */
   const cancelRegistration = (ticketId) => {
     const reg = registrations.find(r => r.ticketId === ticketId);
     if (!reg) return;
@@ -245,7 +278,13 @@ export function EventProvider({ children }) {
     setNotifications(prev => [newNotif, ...prev]);
   };
 
-  // Admin: Create Event
+  /**
+   * Creates and publishes a new collegiate event entity.
+   * Calculates baseline heuristic popularity and turnout forecast metrics.
+   *
+   * @param {Object} eventData - Form payload containing title, category, department, venue, etc.
+   * @returns {Object} Newly instantiated event record with generated unique identifier
+   */
   const createEvent = (eventData) => {
     const newId = `evt-${Date.now().toString().slice(-4)}`;
     const createdEvent = {

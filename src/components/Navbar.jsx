@@ -15,12 +15,13 @@ import {
   LogIn,
   Search,
   CheckCircle2,
-  Compass
+  Compass,
+  Terminal
 } from 'lucide-react';
 import { useEvents } from '../context/EventContext';
 import NotificationDrawer from './NotificationDrawer';
 
-export default function Navbar({ activePage, setActivePage }) {
+export default function Navbar({ activePage, setActivePage, onOpenTestHarness }) {
   const { 
     user, 
     currentRole, 
@@ -166,6 +167,16 @@ export default function Navbar({ activePage, setActivePage }) {
                   Admin
                 </button>
               </div>
+
+              {/* Unit Test & SQA Harness Modal Trigger */}
+              <button
+                onClick={onOpenTestHarness}
+                className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-slate-200 hover:border-campus-400 bg-white hover:bg-campus-50 text-[11px] font-bold text-slate-700 transition-all shadow-2xs"
+                title="Launch In-Browser Unit Test Suite & Error Boundary Diagnostics"
+              >
+                <Terminal className="w-3.5 h-3.5 text-campus-600" />
+                <span>Unit Tests</span>
+              </button>
 
               {/* Notification Bell */}
               <button

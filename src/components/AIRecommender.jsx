@@ -31,6 +31,15 @@ const ALL_SKILLS_POOL = [
   'Entrepreneurship'
 ];
 
+/**
+ * @component AIRecommender
+ * @description Renders the Adaptive Neural Recommender widget with explainable AI reasoning,
+ * live interest vector adjustment controls, and top match card rankings.
+ * 
+ * @param {Object} props
+ * @param {Function} props.onViewDetails - Handler invoked when student selects 'View Details' on a card
+ * @param {Function} props.onRegister - Handler invoked when student triggers 1-click registration
+ */
 export default function AIRecommender({ onViewDetails, onRegister }) {
   const { user, updateUserInterests, events, calculateAIMatch, registrations } = useEvents();
 
@@ -43,6 +52,12 @@ export default function AIRecommender({ onViewDetails, onRegister }) {
   ]);
   const [activeGoalFilter, setActiveGoalFilter] = useState('All'); // 'All' | 'Tech' | 'Career' | 'Creative'
 
+  /**
+   * Toggles an interest/competency tag on or off in the student's dynamic profile.
+   * Guarantees at least 1 active skill remains to prevent degenerate zero-vector similarity states.
+   * Immediately updates parent context, triggering reactive match recalculations.
+   * @param {string} skill - Competency keyword from ALL_SKILLS_POOL
+   */
   const toggleSkill = (skill) => {
     let updated;
     if (selectedInterests.includes(skill)) {

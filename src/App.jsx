@@ -12,10 +12,22 @@ import EventDetailsModal from './components/EventDetailsModal';
 import RegistrationModal from './components/RegistrationModal';
 import TicketModal from './components/TicketModal';
 import AuthModal from './components/AuthModal';
+import ErrorBoundary from './components/ErrorBoundary';
+import UnitTestRunnerModal from './components/UnitTestRunnerModal';
+
+/**
+ * Controlled fault injection component used exclusively to demonstrate
+ * Error Boundary fault isolation during academic code reviews.
+ */
+function BuggyTestComponent() {
+  throw new Error('Simulated Component Exception: Intentionally thrown to test ErrorBoundary fault isolation!');
+}
 
 function MainApp() {
   const [activePage, setActivePage] = useState('home');
   const [registeringEvent, setRegisteringEvent] = useState(null);
+  const [isTestModalOpen, setIsTestModalOpen] = useState(false);
+  const [triggerSimulatedCrash, setTriggerSimulatedCrash] = useState(false);
 
   const { 
     selectedEventForModal, 
@@ -45,8 +57,15 @@ function MainApp() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-campus-500 selection:text-white">
       
+      {/* Intentional fault injection trigger for viva / evaluation review */}
+      {triggerSimulatedCrash && <BuggyTestComponent />}
+
       {/* Navigation */}
-      <Navbar activePage={activePage} setActivePage={setActivePage} />
+      <Navbar 
+        activePage={activePage} 
+        setActivePage={setActivePage}
+        onOpenTestHarness={() => setIsTestModalOpen(true)}
+      />
 
       {/* Main View Router */}
       <main className="flex-1">
@@ -59,7 +78,10 @@ function MainApp() {
       </main>
 
       {/* Footer */}
-      <Footer onNavigate={handleNavigate} />
+      <Footer 
+        onNavigate={handleNavigate} 
+        onOpenTestHarness={() => setIsTestModalOpen(true)}
+      />
 
       {/* Global Modals */}
       
@@ -101,14 +123,29 @@ function MainApp() {
       {/* 4. Auth Modal */}
       <AuthModal onLoginSuccess={handleLoginRedirect} />
 
+      {/* 5. In-Browser Unit Test & Error Boundary Verification Modal */}
+      <UnitTestRunnerModal
+        isOpen={isTestModalOpen}
+        onClose={() => setIsTestModalOpen(false)}
+        onTriggerTestError={() => {
+          setIsTestModalOpen(false);
+          setTriggerSimulatedCrash(true);
+        }}
+      />
+
     </div>
   );
 }
 
+/**
+ * Root Application export wrapped with high-level Error Boundary and Event Context Provider
+ */
 export default function App() {
   return (
-    <EventProvider>
-      <MainApp />
-    </EventProvider>
+    <ErrorBoundary>
+      <EventProvider>
+        <MainApp />
+      </EventProvider>
+    </ErrorBoundary>
   );
 }
